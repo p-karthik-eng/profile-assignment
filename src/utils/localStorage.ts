@@ -1,4 +1,6 @@
-export const saveToLocalStorage = (profile: any) => {
+import type { Profile } from "../store/profileSlice";
+
+export const saveToLocalStorage = (profile: Profile) => {
   localStorage.setItem("profile", JSON.stringify(profile));
 };
 

@@ -48,7 +48,8 @@ const ProfilePage: React.FC = () => {
       dispatch(clearProfile());
       clearLocalStorage();
       navigate("/profile-form");
-    } catch (error) {
+    } catch (err) {
+      console.log(err);
       setErrorMessage("Failed to delete user.");
       setErrorDialogOpen(true);
     } finally {

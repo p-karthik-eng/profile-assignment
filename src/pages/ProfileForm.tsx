@@ -70,7 +70,8 @@ const ProfileForm: React.FC = () => {
       saveToLocalStorage(user);
       setSuccess(true);
       setTimeout(() => navigate("/profile-page"), 1000);
-    } catch (error) {
+    } catch (err) {
+      console.log(err);
       setError("Failed to save profile");
       setLoading(false);
     }

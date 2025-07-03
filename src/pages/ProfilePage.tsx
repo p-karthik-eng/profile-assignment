@@ -5,6 +5,7 @@ import type { RootState } from "../store";
 import { clearProfile } from "../store/profileSlice";
 import { useNavigate } from "react-router-dom";
 import { clearLocalStorage } from "../utils/localStorage";
+import { deleteUser } from "../utils/api";
 
 const ProfilePage: React.FC = () => {
   const profile = useSelector((state: RootState) => state.profile.data);
@@ -18,12 +19,27 @@ const ProfilePage: React.FC = () => {
     }
   }, [profile]);
 
-  const handleDelete = () => {
-    if (confirm("Are you sure to delete your profile?")) {
-      dispatch(clearProfile());
-      clearLocalStorage();
-      navigate("/profile-form");
+  const handleDelete = async () => {
+    if (!profile || !profile.id) {
+      alert("No user ID found to delete.");
+      return;
     }
+    if (confirm("Are you sure to delete your profile?")) {
+      try {
+        await deleteUser(profile.id as string);
+        dispatch(clearProfile());
+        clearLocalStorage();
+        navigate("/profile-form");
+      } catch (error) {
+        alert("Failed to delete user.");
+      }
+    }
+  };
+
+  const handleLogout = () => {
+    dispatch(clearProfile());
+    clearLocalStorage();
+    navigate("/profile-form");
   };
 
   if (notFound) {
@@ -67,8 +83,16 @@ const ProfilePage: React.FC = () => {
         >
           Edit
         </Button>
-        <Button variant="contained" color="error" onClick={handleDelete}>
-          Delete &amp; Logout
+        <Button
+          variant="contained"
+          color="error"
+          onClick={handleDelete}
+          sx={{ mr: 2 }}
+        >
+          Delete
+        </Button>
+        <Button variant="contained" color="secondary" onClick={handleLogout}>
+          Logout
         </Button>
       </Box>
     </Box>

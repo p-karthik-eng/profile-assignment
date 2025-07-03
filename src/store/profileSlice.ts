@@ -3,6 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { loadFromLocalStorage } from "../utils/localStorage";
 
 export interface Profile {
+  id?: string;
   name: string;
   email: string;
   age?: number;

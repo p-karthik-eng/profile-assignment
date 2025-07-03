@@ -3,7 +3,9 @@ import type { Profile } from "../store/profileSlice";
 
 export async function loginUser(username: string, data: Profile) {
   const res = await fetch(
-    `${baseUrl}?username=${encodeURIComponent(username)}`
+    `${baseUrl}?username=${encodeURIComponent(
+      username
+    )}&email=${encodeURIComponent(data.email)}`
   );
 
   const users = await res.json();
@@ -25,4 +27,14 @@ export async function loginUser(username: string, data: Profile) {
     });
     return await createRes.json();
   }
+}
+
+export async function deleteUser(userId: string) {
+  const res = await fetch(`${baseUrl}/${userId}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    throw new Error("Failed to delete user");
+  }
+  return await res.json();
 }

@@ -57,8 +57,8 @@ const ProfileForm: React.FC = () => {
     };
 
     try {
-      await loginUser(form.name, payload);
-      dispatch(setProfile(payload));
+      const user = await loginUser(form.name, payload);
+      dispatch(setProfile(user));
       setSuccess(true);
       setTimeout(() => navigate("/profile-page"), 1000);
     } catch (error) {

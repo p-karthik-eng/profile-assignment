@@ -1,3 +1,11 @@
 {
-  "profile": []
+  "users": [
+    {
+      "id": "779d",
+      "username": "Yasvanth Hanumantu",
+      "name": "Yasvanth Hanumantu",
+      "email": "yasvanthhanumantu1@gmail.com",
+      "age": 22
+    }
+  ]
 }

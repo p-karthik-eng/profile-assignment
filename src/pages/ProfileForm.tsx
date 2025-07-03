@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setProfile } from "../store/profileSlice";
 import { useNavigate } from "react-router-dom";
 import type { RootState } from "../store";
-import { saveToLocalStorage } from "../utils/localStorage";
+import { loginUser } from "../utils/api";
 
 const ProfileForm: React.FC = () => {
   const dispatch = useDispatch();
@@ -14,6 +14,7 @@ const ProfileForm: React.FC = () => {
   const [form, setForm] = useState({ name: "", email: "", age: "" });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (existingProfile) {
@@ -43,8 +44,9 @@ const ProfileForm: React.FC = () => {
     return "";
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     const err = validate();
     if (err) return setError(err);
 
@@ -54,10 +56,16 @@ const ProfileForm: React.FC = () => {
       age: form.age ? Number(form.age) : undefined,
     };
 
-    dispatch(setProfile(payload));
-    saveToLocalStorage(payload);
-    setSuccess(true);
-    setTimeout(() => navigate("/profile-page"), 1000);
+    try {
+      await loginUser(form.name, payload);
+      dispatch(setProfile(payload));
+      setSuccess(true);
+      setTimeout(() => navigate("/profile-page"), 1000);
+    } catch (error) {
+      setError("Failed to save profile");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -94,8 +102,8 @@ const ProfileForm: React.FC = () => {
         onChange={handleChange}
       />
 
-      <Button type="submit" variant="contained">
-        Save Profile
+      <Button type="submit" disabled={loading} variant="contained">
+        {loading ? "Saving..." : "Save Profile"}
       </Button>
 
       {error && (

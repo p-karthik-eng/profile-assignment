@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { loadFromLocalStorage } from "../utils/localStorage";
 
-interface Profile {
+export interface Profile {
   name: string;
   email: string;
   age?: number;

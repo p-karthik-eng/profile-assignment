@@ -8,7 +8,7 @@ function App() {
     <BrowserRouter>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Navigate to="/profile-page" />} />
+        <Route path="/" element={<Navigate to="/profile-form" />} />
         <Route path="/profile-form" element={<ProfileForm />} />
         <Route path="/profile-page" element={<ProfilePage />} />
         <Route path="*" element={<PageNotFound />} />

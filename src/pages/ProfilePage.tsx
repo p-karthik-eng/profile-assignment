@@ -6,6 +6,9 @@ import { clearProfile } from "../store/profileSlice";
 import { useNavigate } from "react-router-dom";
 import { clearLocalStorage } from "../utils/localStorage";
 import { deleteUser } from "../utils/api";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const ProfilePage: React.FC = () => {
   const profile = useSelector((state: RootState) => state.profile.data);
@@ -78,20 +81,30 @@ const ProfilePage: React.FC = () => {
       <Box mt={2}>
         <Button
           variant="outlined"
+          size="small"
+          startIcon={<EditIcon />}
           onClick={() => navigate("/profile-form")}
-          sx={{ mr: 2 }}
+          sx={{ mr: 1 }}
         >
           Edit
         </Button>
         <Button
           variant="contained"
           color="error"
+          size="small"
+          startIcon={<DeleteIcon />}
           onClick={handleDelete}
-          sx={{ mr: 2 }}
+          sx={{ mr: 1 }}
         >
           Delete
         </Button>
-        <Button variant="contained" color="secondary" onClick={handleLogout}>
+        <Button
+          variant="contained"
+          color="warning"
+          size="small"
+          startIcon={<LogoutIcon />}
+          onClick={handleLogout}
+        >
           Logout
         </Button>
       </Box>

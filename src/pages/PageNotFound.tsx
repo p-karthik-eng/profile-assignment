@@ -12,7 +12,7 @@ const PageNotFound: React.FC = () => {
       alignItems="center"
       flexDirection="column"
       textAlign="center"
-      sx={{ backgroundColor: "#f5f5f5", p: 2, height: "80vh" }}
+      sx={{ p: 2, height: "80vh" }}
     >
       <Typography variant="h1" fontWeight={700} color="primary">
         404

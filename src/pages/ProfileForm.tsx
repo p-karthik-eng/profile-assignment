@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, TextField, Typography, Snackbar } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Snackbar,
+  Paper,
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setProfile } from "../store/profileSlice";
 import { useNavigate } from "react-router-dom";
@@ -63,59 +70,85 @@ const ProfileForm: React.FC = () => {
       setTimeout(() => navigate("/profile-page"), 1000);
     } catch (error) {
       setError("Failed to save profile");
-    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ p: 4 }}>
-      <Typography variant="h5" sx={{ mb: 3 }}>
-        Profile Form
-      </Typography>
-      <TextField
-        label="Name"
-        name="name"
-        fullWidth
-        sx={{ mb: 2 }}
-        value={form.name}
-        onChange={handleChange}
-        required
-      />
-      <TextField
-        label="Email"
-        name="email"
-        type="email"
-        fullWidth
-        sx={{ mb: 2 }}
-        value={form.email}
-        onChange={handleChange}
-        required
-      />
-      <TextField
-        label="Age"
-        name="age"
-        type="number"
-        fullWidth
-        sx={{ mb: 2 }}
-        value={form.age}
-        onChange={handleChange}
-      />
-
-      <Button type="submit" disabled={loading} variant="contained">
-        {loading ? "Saving..." : "Save Profile"}
-      </Button>
-
-      {error && (
-        <Typography color="error" mt={2}>
-          {error}
-        </Typography>
-      )}
-
+    <Box
+      minHeight="80vh"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <form onSubmit={handleSubmit}>
+        <Paper
+          elevation={2}
+          sx={{
+            p: 4,
+            maxWidth: 350,
+            width: "100%",
+            borderRadius: 0.5,
+          }}
+        >
+          <Typography variant="h5" sx={{ mb: 3, textAlign: "center" }}>
+            Profile Form
+          </Typography>
+          <TextField
+            label="Name"
+            name="name"
+            fullWidth
+            sx={{ mb: 2 }}
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+          <TextField
+            label="Email"
+            name="email"
+            type="email"
+            fullWidth
+            sx={{ mb: 2 }}
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+          <TextField
+            label="Age"
+            name="age"
+            type="number"
+            fullWidth
+            sx={{ mb: 2 }}
+            value={form.age}
+            onChange={handleChange}
+          />
+          <Button
+            type="submit"
+            disabled={loading}
+            variant="contained"
+            fullWidth
+            sx={{ mt: 1 }}
+          >
+            {existingProfile
+              ? loading
+                ? "Updating..."
+                : "Update Profile"
+              : loading
+              ? "Saving..."
+              : "Save Profile"}
+          </Button>
+          {error && (
+            <Typography color="error" mt={2} textAlign="center">
+              {error}
+            </Typography>
+          )}
+        </Paper>
+      </form>
       <Snackbar
         open={success}
         autoHideDuration={2000}
         message="Profile saved!"
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       />
     </Box>
   );

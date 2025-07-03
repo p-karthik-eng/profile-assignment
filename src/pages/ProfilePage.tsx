@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Box, Typography, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store";
 import { clearProfile } from "../store/profileSlice";
@@ -15,6 +23,9 @@ const ProfilePage: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [notFound, setNotFound] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   React.useEffect(() => {
     if (!profile) {
@@ -24,18 +35,24 @@ const ProfilePage: React.FC = () => {
 
   const handleDelete = async () => {
     if (!profile || !profile.id) {
-      alert("No user ID found to delete.");
+      setErrorMessage("No user ID found to delete.");
+      setErrorDialogOpen(true);
       return;
     }
-    if (confirm("Are you sure to delete your profile?")) {
-      try {
-        await deleteUser(profile.id as string);
-        dispatch(clearProfile());
-        clearLocalStorage();
-        navigate("/profile-form");
-      } catch (error) {
-        alert("Failed to delete user.");
-      }
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await deleteUser(profile?.id as string);
+      dispatch(clearProfile());
+      clearLocalStorage();
+      navigate("/profile-form");
+    } catch (error) {
+      setErrorMessage("Failed to delete user.");
+      setErrorDialogOpen(true);
+    } finally {
+      setDeleteDialogOpen(false);
     }
   };
 
@@ -108,6 +125,49 @@ const ProfilePage: React.FC = () => {
           Logout
         </Button>
       </Box>
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Box sx={{ minWidth: 250 }}>
+            Are you sure you want to delete your profile? This action cannot be
+            undone.
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ mb: 1, mr: 1 }}>
+          <Button
+            onClick={() => setDeleteDialogOpen(false)}
+            color="primary"
+            size="small"
+          >
+            Cancel
+          </Button>
+          <Button onClick={confirmDelete} color="error" size="small" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Error Dialog */}
+      <Dialog open={errorDialogOpen} onClose={() => setErrorDialogOpen(false)}>
+        <DialogTitle>Error</DialogTitle>
+        <DialogContent>
+          <Box sx={{ minWidth: 250 }}>{errorMessage}</Box>
+        </DialogContent>
+        <DialogActions sx={{ mb: 1, mr: 1 }}>
+          <Button
+            onClick={() => setErrorDialogOpen(false)}
+            color="primary"
+            size="small"
+            autoFocus
+          >
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

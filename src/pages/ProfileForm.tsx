@@ -12,6 +12,7 @@ import { setProfile } from "../store/profileSlice";
 import { useNavigate } from "react-router-dom";
 import type { RootState } from "../store";
 import { loginUser } from "../utils/api";
+import { saveToLocalStorage } from "../utils/localStorage";
 
 const ProfileForm: React.FC = () => {
   const dispatch = useDispatch();
@@ -66,6 +67,7 @@ const ProfileForm: React.FC = () => {
     try {
       const user = await loginUser(form.name, payload);
       dispatch(setProfile(user));
+      saveToLocalStorage(user);
       setSuccess(true);
       setTimeout(() => navigate("/profile-page"), 1000);
     } catch (error) {

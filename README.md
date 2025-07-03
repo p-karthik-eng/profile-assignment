@@ -23,7 +23,7 @@ A modern React + TypeScript application for managing user profiles, featuring ro
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Yasvanth-2005/profile-assignment
 cd assignment
 ```
 

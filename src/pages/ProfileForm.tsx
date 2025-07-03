@@ -1,0 +1,116 @@
+import React, { useState, useEffect } from "react";
+import { Box, Button, TextField, Typography, Snackbar } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { setProfile } from "../store/profileSlice";
+import { useNavigate } from "react-router-dom";
+import type { RootState } from "../store";
+import { saveToLocalStorage } from "../utils/localStorage";
+
+const ProfileForm: React.FC = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const existingProfile = useSelector((state: RootState) => state.profile.data);
+
+  const [form, setForm] = useState({ name: "", email: "", age: "" });
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    if (existingProfile) {
+      setForm({
+        name: existingProfile.name,
+        email: existingProfile.email,
+        age: existingProfile.age?.toString() || "",
+      });
+    }
+  }, [existingProfile]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
+
+  const validate = () => {
+    if (!form.name || form.name.length < 3) {
+      return "Name must be at least 3 characters";
+    }
+    if (!form.email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) {
+      return "Invalid email";
+    }
+    if (form.age && isNaN(Number(form.age))) {
+      return "Age must be a number";
+    }
+    return "";
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const err = validate();
+    if (err) return setError(err);
+
+    const payload = {
+      name: form.name,
+      email: form.email,
+      age: form.age ? Number(form.age) : undefined,
+    };
+
+    dispatch(setProfile(payload));
+    saveToLocalStorage(payload);
+    setSuccess(true);
+    setTimeout(() => navigate("/profile-page"), 1000);
+  };
+
+  return (
+    <Box component="form" onSubmit={handleSubmit} sx={{ p: 4 }}>
+      <Typography variant="h5" sx={{ mb: 3 }}>
+        Profile Form
+      </Typography>
+      <TextField
+        label="Name"
+        name="name"
+        fullWidth
+        sx={{ mb: 2 }}
+        value={form.name}
+        onChange={handleChange}
+        required
+      />
+      <TextField
+        label="Email"
+        name="email"
+        type="email"
+        fullWidth
+        sx={{ mb: 2 }}
+        value={form.email}
+        onChange={handleChange}
+        required
+      />
+      <TextField
+        label="Age"
+        name="age"
+        type="number"
+        fullWidth
+        sx={{ mb: 2 }}
+        value={form.age}
+        onChange={handleChange}
+      />
+
+      <Button type="submit" variant="contained">
+        Save Profile
+      </Button>
+
+      {error && (
+        <Typography color="error" mt={2}>
+          {error}
+        </Typography>
+      )}
+
+      <Snackbar
+        open={success}
+        autoHideDuration={2000}
+        message="Profile saved!"
+      />
+    </Box>
+  );
+};
+
+export default ProfileForm;

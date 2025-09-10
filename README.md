@@ -2,30 +2,7 @@
 
 A modern React + TypeScript application for managing user profiles, featuring robust form validation, API integration, error handling, and persistent state using Redux Toolkit and localStorage. Styled with Material-UI (MUI) for a clean, responsive UI.
 
----
 
-## 🚀 Features
-
-- **Profile Form**: Create and update user profiles with validation (Name, Email, Age).
-- **Profile Display**: View, edit, or delete your profile with confirmation dialogs.
-- **Routing**: Seamless navigation using React Router (`/profile-form`, `/profile`, custom 404).
-- **API Integration**: Uses `json-server` as a mock backend for CRUD operations.
-- **Global State**: Redux Toolkit manages profile and API status across the app.
-- **Persistence**: Profile data is saved in localStorage for persistence across refreshes.
-- **Environment Variables**: Easily switch API base URLs for development/production.
-- **Material-UI**: Responsive, accessible, and visually appealing UI components.
-- **Error Handling**: All API and validation errors are handled gracefully with dialogs and notifications.
-
----
-
-## 🛠️ Installation & Running
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/Yasvanth-2005/profile-assignment
-cd assignment
-```
 
 ### 2. Install dependencies
 
@@ -80,13 +57,7 @@ npm run preview
 - All profile CRUD operations (create, update, delete) are performed via RESTful API calls to a mock backend (`json-server`).
 - The API base URL is configured via environment variables, making it easy to switch between development and production environments.
 
-### Form Handling & Validation
 
-- The profile form uses strong validation:
-  - Name: Required, minimum 3 characters.
-  - Email: Required, must be valid.
-  - Age: Optional, must be a number if provided.
-- Errors are shown inline and via MUI Snackbar for a smooth user experience.
 
 ### Routing
 

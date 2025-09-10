@@ -46,14 +46,18 @@ const ProfileForm: React.FC = () => {
     if (!form.name || form.name.length < 3) {
       return "Name must be at least 3 characters";
     }
-    if (!form.email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) {
-      return "Invalid email";
-    }
-    if (form.age && isNaN(Number(form.age))) {
-      return "Age must be a number";
+   if (!form.email || !/^[a-zA-Z0-9](?:[a-zA-Z0-9._%+-]{0,63})@gmail\.com$/.test(form.email)) {
+  return "Invalid email";
+}
+
+     if (form.age) {
+      const ageNum = Number(form.age);
+      if (isNaN(ageNum)) return "Age must be a number";
+      if (ageNum < 1 || ageNum > 120) return "Age must be between 1 and 120";
     }
     return "";
   };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

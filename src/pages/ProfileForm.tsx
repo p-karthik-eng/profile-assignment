@@ -43,9 +43,14 @@ const ProfileForm: React.FC = () => {
   };
 
   const validate = () => {
-    if (!form.name || form.name.length < 3) {
-      return "Name must be at least 3 characters";
-    }
+  if (!form.name || form.name.length < 3) {
+  return "Name must be at least 3 characters";
+}
+
+if (!/^[A-Za-z\s]+$/.test(form.name)) {
+  return "Name must contain only letters";
+}
+
    if (!form.email || !/^[a-zA-Z0-9](?:[a-zA-Z0-9._%+-]{0,63})@gmail\.com$/.test(form.email)) {
   return "Invalid email";
 }

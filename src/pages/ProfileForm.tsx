@@ -5,7 +5,11 @@ import {
   TextField,
   Typography,
   Snackbar,
-  Paper,
+  Card,
+  CardContent,
+  CardActions,
+  Alert,
+  Divider,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setProfile } from "../store/profileSlice";
@@ -20,8 +24,8 @@ const ProfileForm: React.FC = () => {
   const existingProfile = useSelector((state: RootState) => state.profile.data);
 
   const [form, setForm] = useState({ name: "", email: "", age: "" });
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -56,7 +60,11 @@ const ProfileForm: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     const err = validate();
-    if (err) return setError(err);
+    if (err) {
+      setError(err);
+      setLoading(false);
+      return;
+    }
 
     const payload = {
       name: form.name,
@@ -68,11 +76,16 @@ const ProfileForm: React.FC = () => {
       const user = await loginUser(form.name, payload);
       dispatch(setProfile(user));
       saveToLocalStorage(user);
-      setSuccess(true);
+      setSuccess(
+        existingProfile
+          ? "Profile updated successfully 🎉"
+          : "Profile created successfully 🎉"
+      );
       setTimeout(() => navigate("/profile-page"), 1000);
     } catch (err) {
       console.log(err);
       setError("Failed to save profile");
+    } finally {
       setLoading(false);
     }
   };
@@ -83,76 +96,105 @@ const ProfileForm: React.FC = () => {
       display="flex"
       alignItems="center"
       justifyContent="center"
+      px={2}
     >
-      <form onSubmit={handleSubmit}>
-        <Paper
-          elevation={2}
-          sx={{
-            p: 4,
-            maxWidth: 350,
-            width: "100%",
-            borderRadius: 0.5,
-          }}
-        >
-          <Typography variant="h5" sx={{ mb: 3, textAlign: "center" }}>
-            Profile Form
-          </Typography>
-          <TextField
-            label="Name"
-            name="name"
-            fullWidth
-            sx={{ mb: 2 }}
-            value={form.name}
-            onChange={handleChange}
-            required
-          />
-          <TextField
-            label="Email"
-            name="email"
-            type="email"
-            fullWidth
-            sx={{ mb: 2 }}
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
-          <TextField
-            label="Age"
-            name="age"
-            type="number"
-            fullWidth
-            sx={{ mb: 2 }}
-            value={form.age}
-            onChange={handleChange}
-          />
-          <Button
-            type="submit"
-            disabled={loading}
-            variant="contained"
-            fullWidth
-            sx={{ mt: 1 }}
+      <Card sx={{ maxWidth: 420, width: "100%", borderRadius: 3, boxShadow: 6 }}>
+        <CardContent>
+          <Typography
+            variant="h5"
+            component="div"
+            gutterBottom
+            textAlign="center"
+            fontWeight={600}
           >
-            {existingProfile
-              ? loading
-                ? "Updating..."
-                : "Update Profile"
-              : loading
-              ? "Saving..."
-              : "Save Profile"}
-          </Button>
-          {error && (
-            <Typography color="error" mt={2} textAlign="center">
-              {error}
-            </Typography>
-          )}
-        </Paper>
-      </form>
+            {existingProfile ? "Edit Profile" : "Create Profile"}
+          </Typography>
+
+          <Divider sx={{ mb: 3 }} />
+
+         <Box
+  component="form"
+  onSubmit={handleSubmit}
+  sx={{ display: "grid", gap: 2, mt: 2 }}
+>
+  <TextField
+    label="Name"
+    name="name"
+    fullWidth
+    value={form.name}
+    onChange={handleChange}
+    required
+  />
+  <TextField
+    label="Email"
+    name="email"
+    type="email"
+    fullWidth
+    value={form.email}
+    onChange={handleChange}
+    required
+  />
+  <TextField
+    label="Age"
+    name="age"
+    type="number"
+    fullWidth
+    value={form.age}
+    onChange={handleChange}
+  />
+
+  {/* Buttons side by side */}
+  <Box display="flex" gap={2}>
+    <Button
+      type="submit"
+      disabled={loading}
+      variant="contained"
+      sx={{ flex: 1 }}
+    >
+      {existingProfile
+        ? loading
+          ? "Updating..."
+          : "Update Profile"
+        : loading
+        ? "Saving..."
+        : "Create Profile"}
+    </Button>
+
+    <Button
+      type="button"
+      variant="outlined"
+      sx={{ flex: 1 }}
+      onClick={() => setForm({ name: "", email: "", age: "" })}
+    >
+      Clear
+    </Button>
+  </Box>
+</Box>
+
+        </CardContent>
+      </Card>
+
+      {/* Snackbar for errors */}
       <Snackbar
-        open={success}
-        autoHideDuration={2000}
-        message="Profile saved!"
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      />
+        open={!!error}
+        autoHideDuration={4000}
+        onClose={() => setError(null)}
+      >
+        <Alert severity="error" onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      </Snackbar>
+
+      {/* Snackbar for success */}
+      <Snackbar
+        open={!!success}
+        autoHideDuration={3000}
+        onClose={() => setSuccess(null)}
+      >
+        <Alert severity="success" onClose={() => setSuccess(null)}>
+          {success}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

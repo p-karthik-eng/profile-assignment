@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
           Profile Management
         </Typography>
         {profile?.name ? (
-          <Typography variant="subtitle1">Hello, {profile.name}</Typography>
+          <Typography variant="subtitle1">welcome, {profile.name}</Typography>
         ) : (
           <Button color="inherit" onClick={() => navigate("/profile-form")}>
             Login

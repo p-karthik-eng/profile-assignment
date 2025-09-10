@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -7,6 +7,10 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Card,
+  CardContent,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store";
@@ -16,7 +20,7 @@ import { clearLocalStorage } from "../utils/localStorage";
 import { deleteUser } from "../utils/api";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import LogoutIcon from "@mui/icons-material/Logout";
+
 
 const ProfilePage: React.FC = () => {
   const profile = useSelector((state: RootState) => state.profile.data);
@@ -26,8 +30,9 @@ const ProfilePage: React.FC = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [success, setSuccess] = useState<string | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!profile) {
       setNotFound(true);
     }
@@ -47,7 +52,8 @@ const ProfilePage: React.FC = () => {
       await deleteUser(profile?.id as string);
       dispatch(clearProfile());
       clearLocalStorage();
-      navigate("/profile-form");
+      setSuccess("Profile deleted successfully ❌");
+      setTimeout(() => navigate("/profile-form"), 1000);
     } catch (err) {
       console.log(err);
       setErrorMessage("Failed to delete user.");
@@ -57,11 +63,7 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    dispatch(clearProfile());
-    clearLocalStorage();
-    navigate("/profile-form");
-  };
+ 
 
   if (notFound) {
     return (
@@ -73,9 +75,9 @@ const ProfilePage: React.FC = () => {
         justifyContent="center"
         alignItems="center"
       >
-        <Typography variant="h5">No profile found !!</Typography>
+        <Typography variant="h5">No profile found </Typography>
         <Typography sx={{ mb: 2, mt: 1 }}>
-          You can create one by clicking the button below.
+          You can create user by clicking the login button.
         </Typography>
         <Button variant="contained" onClick={() => navigate("/profile-form")}>
           Login
@@ -87,45 +89,40 @@ const ProfilePage: React.FC = () => {
   if (!profile) return null;
 
   return (
-    <Box p={4}>
-      <Typography fontSize={26} sx={{ textDecoration: "underline" }}>
-        Profile Details
-      </Typography>
-      <Typography sx={{ mt: 1 }}>Name: {profile.name}</Typography>
-      <Typography>Email: {profile.email}</Typography>
-      <Typography sx={{ mb: 1 }}>
-        Age: {profile.age || "Not Provided"}
-      </Typography>
-      <Box mt={2}>
-        <Button
-          variant="outlined"
-          size="small"
-          startIcon={<EditIcon />}
-          onClick={() => navigate("/profile-form")}
-          sx={{ mr: 1 }}
-        >
-          Edit
-        </Button>
-        <Button
-          variant="contained"
-          color="error"
-          size="small"
-          startIcon={<DeleteIcon />}
-          onClick={handleDelete}
-          sx={{ mr: 1 }}
-        >
-          Delete
-        </Button>
-        <Button
-          variant="contained"
-          color="warning"
-          size="small"
-          startIcon={<LogoutIcon />}
-          onClick={handleLogout}
-        >
-          Logout
-        </Button>
-      </Box>
+    <Card sx={{ maxWidth: 500, margin: "2rem auto", boxShadow: 3 }}>
+      <CardContent>
+        <Typography variant="h5" gutterBottom>
+          Profile Details
+        </Typography>
+
+        <Typography sx={{ mt: 1 }}>Name: {profile.name}</Typography>
+        <Typography>Email: {profile.email}</Typography>
+        <Typography sx={{ mb: 2 }}>
+          Age: {profile.age || "Not Provided"}
+        </Typography>
+
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<EditIcon />}
+            onClick={() => navigate("/profile-form")}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            size="small"
+            startIcon={<DeleteIcon />}
+            onClick={handleDelete}
+          >
+            Delete
+          </Button>
+         
+        </Box>
+      </CardContent>
+
       {/* Delete Confirmation Dialog */}
       <Dialog
         open={deleteDialogOpen}
@@ -134,8 +131,7 @@ const ProfilePage: React.FC = () => {
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
           <Box sx={{ minWidth: 250 }}>
-            Are you sure you want to delete your profile? This action cannot be
-            undone.
+            Are you sure you want to delete your profile? 
           </Box>
         </DialogContent>
         <DialogActions sx={{ mb: 1, mr: 1 }}>
@@ -169,7 +165,18 @@ const ProfilePage: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+
+      {/* Snackbar for success messages */}
+      <Snackbar
+        open={!!success}
+        autoHideDuration={3000}
+        onClose={() => setSuccess(null)}
+      >
+        <Alert severity="success" onClose={() => setSuccess(null)}>
+          {success}
+        </Alert>
+      </Snackbar>
+    </Card>
   );
 };
 
